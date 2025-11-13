@@ -1,0 +1,18 @@
+<div
+  class="w-150 flex items-center bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-200"
+>
+  <mat-icon class="text-gray-400 mr-2" fontIcon="search"></mat-icon>
+  <input
+    #searchInput
+    type="text"
+    [value]="store.searchTerm()"
+    placeholder="Search products..."
+    class="flex-1 bg-transparent outline-none text-gray-700 text-sm placeholder-gray-400"
+    (keyup)="onNavigateToSearch($event, searchInput.value)"
+  />
+  @if (store.searchTerm()) {
+    <button matIconButton class="small" (click)="onClearSearch(searchInput)">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</div>
