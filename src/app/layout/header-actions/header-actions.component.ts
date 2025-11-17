@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { EcommerceStore } from '../../ecommerce-store';
 import { MatDialog } from '@angular/material/dialog';
-import { SignInDialog } from '../../components/sign-in-dialog/sign-in-dialog';
-import { SignUpDialog } from '../../components/sign-up-dialog/sign-up-dialog';
+import { SignInDialogComponent } from '../../components/sign-in-dialog/sign-in-dialog.component';
+import { SignUpDialogComponent } from '../../components/sign-up-dialog/sign-up-dialog.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatBadge } from '@angular/material/badge';
@@ -32,13 +32,13 @@ export class HeaderActionsComponent {
   protected store = inject(EcommerceStore);
 
   protected onOpenSignInDialog() {
-    this.dialog.open(SignInDialog, {
+    this.dialog.open(SignInDialogComponent, {
       disableClose: true,
     });
   }
 
   protected onOpenSignUpDialog() {
-    this.dialog.open(SignUpDialog, {
+    this.dialog.open(SignUpDialogComponent, {
       disableClose: true,
     });
   }
