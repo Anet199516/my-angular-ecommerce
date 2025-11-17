@@ -7,25 +7,25 @@ import {
   withComputed,
   signalMethod,
 } from '@ngrx/signals';
-import { FilterParams, Product } from './models/product';
-import { CartItem, ItemQuantityParams } from './models/cart';
+import { FilterParams, ProductModel } from './models/product.model';
+import { CartItem, ItemQuantityParams } from './models/cart.model';
 import { produce } from 'immer';
 import { pipe, tap } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Toaster } from './services/toaster';
-import { SignInParams, SignUpParams, User } from './models/user';
-import { Order } from './models/order';
+import { SignInParams, SignUpParams, UserModel } from './models/user.model';
+import { Order } from './models/order.model';
 import { Router } from '@angular/router';
-import { AddReviewParams, UserReview } from './models/user-review';
+import { AddReviewParams, UserReviewModel } from './models/user-review.model';
 import { ResponsiveManager } from './services/responsive-manager';
 import { withStorageSync } from '@angular-architects/ngrx-toolkit';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 export type EcommerceState = {
-  products: Product[];
+  products: ProductModel[];
   cartItems: CartItem[];
-  wishlistItems: Product[];
-  user: User | undefined;
+  wishlistItems: ProductModel[];
+  user: UserModel | undefined;
 
   category: string;
   searchTerm: string;
@@ -1037,7 +1037,7 @@ export const EcommerceStore = signalStore(
           }),
         ),
       ),
-      addToWishlist(product: Product): void {
+      addToWishlist(product: ProductModel): void {
         const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
           if (!draft.find((p) => p.id === product.id)) {
             draft.push(product);
@@ -1046,13 +1046,13 @@ export const EcommerceStore = signalStore(
         patchState(store, { wishlistItems: updatedWishlistItems });
         toaster.success('Product added to wishlist');
       },
-      removeFromWishlist(product: Product): void {
+      removeFromWishlist(product: ProductModel): void {
         patchState(store, {
           wishlistItems: store.wishlistItems().filter((p) => p.id !== product.id),
         });
         toaster.success('Product removed from wishlist');
       },
-      addToCart(product: Product, quantity = 1): void {
+      addToCart(product: ProductModel, quantity = 1): void {
         const existingItemIndex = store
           .cartItems()
           .findIndex((item) => item.product.id === product.id);
@@ -1080,12 +1080,12 @@ export const EcommerceStore = signalStore(
 
         patchState(store, { cartItems: updated });
       },
-      removeFromCart(product: Product): void {
+      removeFromCart(product: ProductModel): void {
         patchState(store, {
           cartItems: store.cartItems().filter((p) => p.product.id !== product.id),
         });
       },
-      moveToWishlist(product: Product): void {
+      moveToWishlist(product: ProductModel): void {
         const updatedCartItems = store.cartItems().filter((p) => p.product.id !== product.id);
         const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
           if (!draft.find((p) => p.id === product.id)) {
@@ -1108,7 +1108,7 @@ export const EcommerceStore = signalStore(
         });
         patchState(store, { cartItems: updatedCartItems, wishlistItems: [] });
       },
-      moveToCart(product: Product): void {
+      moveToCart(product: ProductModel): void {
         const updatedWishlistItems = store.wishlistItems().filter((p) => p.id !== product.id);
         const updatedCartItems = produce(store.cartItems(), (draft) => {
           if (!draft.find((c) => c.product.id === product.id)) {
@@ -1186,7 +1186,7 @@ export const EcommerceStore = signalStore(
         const product = store.products().find((p) => p.id === store.selectedProductId());
         if (!product) return;
 
-        const review: UserReview = {
+        const review: UserReviewModel = {
           id: crypto.randomUUID(),
           title,
           comment,

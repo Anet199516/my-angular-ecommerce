@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { EcommerceStore } from '../../ecommerce-store';
-import { Product } from '../../models/product';
+import { ProductModel } from '../../models/product.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -12,12 +12,12 @@ import { MatIcon } from '@angular/material/icon';
   styles: ``,
 })
 export class ToggleWishlistButtonComponent {
-  public product = input.required<Product>();
+  public product = input.required<ProductModel>();
   protected store = inject(EcommerceStore);
 
   protected isInWishlist = computed(() => this.store.wishlistItems().find((p) => p.id === this.product().id));
 
-  protected onToggleWishlist(product: Product) {
+  protected onToggleWishlist(product: ProductModel) {
     if (this.isInWishlist()) {
       this.store.removeFromWishlist(product);
     } else {

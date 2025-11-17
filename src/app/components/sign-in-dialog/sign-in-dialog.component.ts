@@ -10,7 +10,7 @@ import { EcommerceStore } from '../../ecommerce-store';
 import { Router } from '@angular/router';
 import { SignUpDialogComponent } from '../sign-up-dialog/sign-up-dialog.component';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SignInParams } from '../../models/user';
+import { SignInParams } from '../../models/user.model';
 
 @Component({
   selector: 'app-sign-in-dialog',

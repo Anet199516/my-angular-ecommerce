@@ -7,7 +7,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { SignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component';
 import { EcommerceStore } from '../../ecommerce-store';
-import { SignUpParams } from '../../models/user';
+import { SignUpParams } from '../../models/user.model';
 import { Router } from '@angular/router';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
