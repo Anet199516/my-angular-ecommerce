@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
   {
     path: 'wishlist',
-    loadComponent: () => import('./pages/my-wishlist/my-wishlist'),
+    loadComponent: () => import('./pages/my-wishlist/my-wishlist.component'),
   },
   {
     path: 'cart',
@@ -20,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
-    loadComponent: () => import('./pages/checkout/checkout'),
+    loadComponent: () => import('./pages/checkout/checkout.component'),
   },
   {
     path: 'order-success',
