@@ -1,0 +1,21 @@
+<div class="p-6" [style.view-transition-name]="'sidenav-content'">
+  <h2 class="text-lg text-gray-900">Categories</h2>
+
+  <mat-nav-list>
+    @for (category of categories(); track category) {
+      <mat-list-item
+        [routerLink]="['/products', category]"
+        [queryParams]="store.searchTerm() ? { search: store.searchTerm() } : {}"
+        [activated]="category === store.category()"
+        class="my-2"
+      >
+            <span
+              matListItemTitle
+              class="font-medium"
+              [class]="category === store.category() ? 'text-white' : null"
+            >{{ category | titlecase }}</span
+            >
+      </mat-list-item>
+    }
+  </mat-nav-list>
+</div>

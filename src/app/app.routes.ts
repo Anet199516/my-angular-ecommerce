@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'products/:categoryName',
-    loadComponent: () => import('./pages/products-grid/products-grid'),
+    loadComponent: () => import('./pages/products-grid/products-grid.component'),
   },
   {
     path: 'wishlist',
@@ -16,7 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'cart',
-    loadComponent: () => import('./pages/view-cart/view-cart'),
+    loadComponent: () => import('./pages/view-cart/view-cart.component'),
   },
   {
     path: 'checkout',
@@ -24,7 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'order-success',
-    loadComponent: () => import('./pages/order-success/order-success'),
+    loadComponent: () => import('./pages/order-success/order-success.component'),
   },
   {
     path: 'product/:productId',
