@@ -44,7 +44,7 @@ export class SignInDialogComponent {
     password: ['test123', Validators.required],
   });
 
-  protected onSignIn() {
+  protected onSignIn(): void {
     if (!this.signInForm.valid) {
       this.signInForm.markAllAsTouched();
       return;
@@ -60,7 +60,7 @@ export class SignInDialogComponent {
     } as SignInParams);
   }
 
-  protected onOpenSignUpDialog() {
+  protected onOpenSignUpDialog(): void {
     this.dialogRef.close();
     this.dialog.open(SignUpDialogComponent, {
       disableClose: true,

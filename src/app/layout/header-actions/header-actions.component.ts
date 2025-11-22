@@ -31,13 +31,13 @@ export class HeaderActionsComponent {
   private dialog = inject(MatDialog);
   protected store = inject(EcommerceStore);
 
-  protected onOpenSignInDialog() {
+  protected onOpenSignInDialog(): void {
     this.dialog.open(SignInDialogComponent, {
       disableClose: true,
     });
   }
 
-  protected onOpenSignUpDialog() {
+  protected onOpenSignUpDialog(): void {
     this.dialog.open(SignUpDialogComponent, {
       disableClose: true,
     });

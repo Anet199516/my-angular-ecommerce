@@ -15,7 +15,7 @@ export class SearchBarComponent {
   protected store = inject(EcommerceStore);
   private router = inject(Router);
 
-  protected onNavigateToSearch(event: KeyboardEvent, searchQuery: string) {
+  protected onNavigateToSearch(event: KeyboardEvent, searchQuery: string): void {
     if (event.key !== 'Enter') return;
     const trimmedSearch = searchQuery.trim();
 
@@ -24,7 +24,7 @@ export class SearchBarComponent {
     });
   }
 
-  protected onClearSearch(input: HTMLInputElement) {
+  protected onClearSearch(input: HTMLInputElement): void {
     input.value = '';
     const event = new KeyboardEvent('keyup', { key: 'Enter' });
     this.onNavigateToSearch(event, '');

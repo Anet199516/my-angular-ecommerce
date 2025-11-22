@@ -3,7 +3,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { EcommerceStore } from '../../ecommerce-store';
-import { ResponsiveManager } from '../../services/responsive-manager';
+import { ResponsiveManagerService } from '../../services/responsive-manager.service';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 import { HeaderActionsComponent } from '../header-actions/header-actions.component';
 
@@ -18,5 +18,5 @@ import { HeaderActionsComponent } from '../header-actions/header-actions.compone
 })
 export class HeaderComponent {
   protected store = inject(EcommerceStore);
-  protected responsiveManager = inject(ResponsiveManager);
+  protected responsiveManager = inject(ResponsiveManagerService);
 }

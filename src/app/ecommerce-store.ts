@@ -12,14 +12,13 @@ import { CartItem, ItemQuantityParams } from './models/cart.model';
 import { produce } from 'immer';
 import { pipe, tap } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { Toaster } from './services/toaster';
+import { ToasterService } from './services/toaster.service';
 import { SignInParams, SignUpParams, UserModel } from './models/user.model';
 import { Order } from './models/order.model';
 import { Router } from '@angular/router';
 import { AddReviewParams, UserReviewModel } from './models/user-review.model';
-import { ResponsiveManager } from './services/responsive-manager';
-import { withStorageSync } from '@angular-architects/ngrx-toolkit';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ResponsiveManagerService } from './services/responsive-manager.service';
+import { MatDialog } from '@angular/material/dialog';
 import { INITIAL_STATE } from './models/store.model';
 
 export const EcommerceStore = signalStore(
@@ -27,12 +26,13 @@ export const EcommerceStore = signalStore(
     providedIn: 'root',
   },
   withState(INITIAL_STATE),
-  withStorageSync({
-    key: 'ecommerce-store',
-    select: ({ cartItems, wishlistItems, user }) => ({ cartItems, wishlistItems, user }),
-  }),
+  // TODO: replace with manual saving to localStorage
+  // withStorageSync({
+  //   key: 'ecommerce-store',
+  //   select: ({ cartItems, wishlistItems, user }) => ({ cartItems, wishlistItems, user }),
+  // }),
   withMethods(
-    (store, toaster = inject(Toaster), router = inject(Router), matDialog = inject(MatDialog)) => ({
+    (store, toaster = inject(ToasterService), router = inject(Router), matDialog = inject(MatDialog)) => ({
       setParams: rxMethod<FilterParams>(
         pipe(
           tap((params) => {
@@ -216,7 +216,7 @@ export const EcommerceStore = signalStore(
       },
     }),
   ),
-  withComputed((store, responsiveManager = inject(ResponsiveManager)) => ({
+  withComputed((store, responsiveManager = inject(ResponsiveManagerService)) => ({
     filteredProducts: computed(() => {
       const products = store.products();
       const category = store.category();

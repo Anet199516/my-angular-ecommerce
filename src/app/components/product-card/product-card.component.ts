@@ -5,7 +5,7 @@ import { ProductModel } from '../../models/product.model';
 import { EcommerceStore } from '../../ecommerce-store';
 import { StarRatingComponent } from '../star-rating/star-rating.component';
 import { RouterLink } from '@angular/router';
-import { ResponsiveManager } from '../../services/responsive-manager';
+import { ResponsiveManagerService } from '../../services/responsive-manager.service';
 
 @Component({
   selector: 'app-product-card',
@@ -19,11 +19,11 @@ export class ProductCardComponent {
   public product = input.required<ProductModel>();
   protected store = inject(EcommerceStore);
 
-  protected responsiveManager = inject(ResponsiveManager);
+  protected responsiveManager = inject(ResponsiveManagerService);
 
   protected isInWishlist = computed(() => this.store.wishlistItems().find((p) => p.id === this.product().id));
 
-  public toggleWishlist(product: ProductModel) {
+  public toggleWishlist(product: ProductModel): void {
     if (this.isInWishlist()) {
       this.store.removeFromWishlist(product);
     } else {

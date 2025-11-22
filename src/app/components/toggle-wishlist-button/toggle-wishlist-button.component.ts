@@ -17,7 +17,7 @@ export class ToggleWishlistButtonComponent {
 
   protected isInWishlist = computed(() => this.store.wishlistItems().find((p) => p.id === this.product().id));
 
-  protected onToggleWishlist(product: ProductModel) {
+  protected onToggleWishlist(product: ProductModel): void {
     if (this.isInWishlist()) {
       this.store.removeFromWishlist(product);
     } else {

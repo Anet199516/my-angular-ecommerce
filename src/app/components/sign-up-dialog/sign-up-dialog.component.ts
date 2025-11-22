@@ -44,7 +44,7 @@ export class SignUpDialogComponent {
     confirmPassword: ['testing', Validators.required],
   });
 
-  protected onSignUp() {
+  protected onSignUp(): void {
     if (!this.signUpForm.valid) {
       this.signUpForm.markAllAsTouched();
       return;
@@ -61,7 +61,7 @@ export class SignUpDialogComponent {
     } as SignUpParams);
   }
 
-  protected onOpenSignInDialog() {
+  protected onOpenSignInDialog(): void {
     this.dialogRef.close();
     this.dialog.open(SignInDialogComponent, {
       disableClose: true,
