@@ -18,11 +18,11 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styles: ``,
 })
 export default class ViewCartComponent {
-  store = inject(EcommerceStore);
-  router = inject(Router);
-  dialog = inject(MatDialog);
+  protected store = inject(EcommerceStore);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
 
-  proceedToCheckout() {
+  public onProceedToCheckout(): void {
     if (this.store.user()) {
       this.router.navigate(['/checkout']);
     } else {

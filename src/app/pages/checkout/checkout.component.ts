@@ -14,5 +14,5 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styles: ``,
 })
 export default class CheckoutComponent {
-  store = inject(EcommerceStore);
+  protected store = inject(EcommerceStore);
 }

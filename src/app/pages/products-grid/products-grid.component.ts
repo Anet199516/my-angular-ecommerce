@@ -5,7 +5,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { EcommerceStore } from '../../ecommerce-store';
 import { CategoryMenuComponent } from './category-menu/category-menu.component';
-import { ResponsiveManager } from '../../services/responsive-manager';
+import { ResponsiveManagerService } from '../../services/responsive-manager.service';
 import { ToggleWishlistButtonComponent } from '../../components/toggle-wishlist-button/toggle-wishlist-button.component';
 
 @Component({
@@ -26,12 +26,12 @@ import { ToggleWishlistButtonComponent } from '../../components/toggle-wishlist-
   styles: ``,
 })
 export default class ProductsGridComponent {
-  categoryName = input<string | undefined>('all');
-  search = input<string | undefined>('');
-  store = inject(EcommerceStore);
-  responsiveManager = inject(ResponsiveManager);
+  public categoryName = input<string | undefined>('all');
+  public search = input<string | undefined>('');
+  protected store = inject(EcommerceStore);
+  protected responsiveManager = inject(ResponsiveManagerService);
 
-  productsQueryParams = computed(() => ({
+  private readonly productsQueryParams = computed(() => ({
     category: this.categoryName() ?? 'all',
     searchTerm: this.search() ?? '',
   }));

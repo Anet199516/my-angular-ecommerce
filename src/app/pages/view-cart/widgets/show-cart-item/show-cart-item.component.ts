@@ -14,6 +14,6 @@ import { CartItem } from '../../../../models/cart.model';
   styles: ``,
 })
 export class ShowCartItemComponent {
+  public item = input.required<CartItem>();
   protected store = inject(EcommerceStore);
-  item = input.required<CartItem>();
 }

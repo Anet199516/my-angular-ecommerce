@@ -12,7 +12,6 @@ import { TitleCasePipe } from '@angular/common';
   styles: ``,
 })
 export class CategoryMenuComponent {
-  store = inject(EcommerceStore);
-
-  categories = signal<string[]>(['all', 'electronics', 'clothing', 'accessories', 'home']);
+  protected store = inject(EcommerceStore);
+  protected categories = signal<string[]>(['all', 'electronics', 'clothing', 'accessories', 'home']);
 }
