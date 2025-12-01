@@ -113,6 +113,24 @@
               "src/styles.scss"
             ]
           }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "ngx-fullstack-ecommerce:build",
+            "compodoc": false,
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "ngx-fullstack-ecommerce:build",
+            "compodoc": false,
+            "outputDir": "storybook-static"
+          }
         }
       }
     }
