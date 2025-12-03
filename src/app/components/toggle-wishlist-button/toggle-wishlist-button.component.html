@@ -3,5 +3,5 @@
   matIconButton
   (click)="onToggleWishlist(product())"
 >
-  <mat-icon>{{ isInWishlist() ? 'favorite' : 'favorite_border' }}</mat-icon>
+  <mat-icon data-testid="wishlist-icon">{{ isInWishlist() ? 'favorite' : 'favorite_border' }}</mat-icon>
 </button>
