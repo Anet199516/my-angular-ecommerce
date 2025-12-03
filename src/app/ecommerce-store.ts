@@ -26,11 +26,6 @@ export const EcommerceStore = signalStore(
     providedIn: 'root',
   },
   withState(INITIAL_STATE),
-  // TODO: replace with manual saving to localStorage
-  // withStorageSync({
-  //   key: 'ecommerce-store',
-  //   select: ({ cartItems, wishlistItems, user }) => ({ cartItems, wishlistItems, user }),
-  // }),
   withMethods(
     (store, toaster = inject(ToasterService), router = inject(Router), matDialog = inject(MatDialog)) => ({
       setParams: rxMethod<FilterParams>(

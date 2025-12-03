@@ -182,3 +182,18 @@ mat-sidenav {
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 1rem;
 }
+
+// Toast
+.toast-success {
+  .mdc-snackbar__surface {
+    background-color: #4caf50 !important;
+    color: #fff !important;
+  }
+}
+
+.toast-error {
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+    color: #fff !important;
+  }
+}

@@ -1,22 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-// import { HotToastService } from '@ngxpert/hot-toast';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-// TODO: replace with angular material toast
 @Injectable({
   providedIn: 'root',
 })
 export class ToasterService {
-  // private toasterService = inject(HotToastService);
+  private _snackBar = inject(MatSnackBar);
 
   public success(message: string) {
-    // this.toasterService.success(message);
+    this._snackBar.open(message, undefined, { panelClass: ['toast-success'] });
   }
 
   public error(message: string) {
-    // this.toasterService.error(message);
-  }
-
-  public loading(message: string) {
-    // this.toasterService.loading(message);
+    this._snackBar.open(message, undefined, { panelClass: ['toast-error'] });
   }
 }
