@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, computed, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, input } from '@angular/core';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 
 import { TitleCasePipe } from '@angular/common';
@@ -7,6 +7,7 @@ import { EcommerceStore } from '../../ecommerce-store';
 import { CategoryMenuComponent } from './category-menu/category-menu.component';
 import { ResponsiveManagerService } from '../../services/responsive-manager.service';
 import { ToggleWishlistButtonComponent } from '../../components/toggle-wishlist-button/toggle-wishlist-button.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-products-grid',
@@ -19,6 +20,7 @@ import { ToggleWishlistButtonComponent } from '../../components/toggle-wishlist-
     ProductCardComponent,
     CategoryMenuComponent,
     ToggleWishlistButtonComponent,
+    MatProgressSpinnerModule
   ],
   providers: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

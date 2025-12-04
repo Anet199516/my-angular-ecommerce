@@ -10,7 +10,7 @@ import {
 import { FilterParams, ProductModel } from './models/product.model';
 import { CartItem, ItemQuantityParams } from './models/cart.model';
 import { produce } from 'immer';
-import { pipe, tap } from 'rxjs';
+import { catchError, finalize, of, pipe, switchMap, tap, timer } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { ToasterService } from './services/toaster.service';
 import { SignInParams, SignUpParams, UserModel } from './models/user.model';
@@ -20,6 +20,8 @@ import { AddReviewParams, UserReviewModel } from './models/user-review.model';
 import { ResponsiveManagerService } from './services/responsive-manager.service';
 import { MatDialog } from '@angular/material/dialog';
 import { INITIAL_STATE } from './models/store.model';
+import { ProductsService } from './services/products.service';
+
 
 export const EcommerceStore = signalStore(
   {
@@ -27,189 +29,232 @@ export const EcommerceStore = signalStore(
   },
   withState(INITIAL_STATE),
   withMethods(
-    (store, toaster = inject(ToasterService), router = inject(Router), matDialog = inject(MatDialog)) => ({
-      setParams: rxMethod<FilterParams>(
-        pipe(
-          tap((params) => {
-            const { category, searchTerm } = params;
-            patchState(store, { category, searchTerm });
-          }),
+    (
+      store,
+      toaster = inject(ToasterService),
+      router = inject(Router),
+      matDialog = inject(MatDialog),
+      productsService = inject(ProductsService)
+    ) => {
+      return {
+        setParams: rxMethod<FilterParams>(
+          pipe(
+            tap((params) => {
+              const { category, searchTerm } = params;
+              patchState(store, { category, searchTerm });
+
+              debugger
+              // (store as any)?.simulateCategoryLoad();
+            }),
+          ),
         ),
-      ),
-      addToWishlist(product: ProductModel): void {
-        const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
-          if (!draft.find((p) => p.id === product.id)) {
-            draft.push(product);
-          }
-        });
-        patchState(store, { wishlistItems: updatedWishlistItems });
-        toaster.success('Product added to wishlist');
-      },
-      removeFromWishlist(product: ProductModel): void {
-        patchState(store, {
-          wishlistItems: store.wishlistItems().filter((p) => p.id !== product.id),
-        });
-        toaster.success('Product removed from wishlist');
-      },
-      addToCart(product: ProductModel, quantity = 1): void {
-        const existingItemIndex = store
-          .cartItems()
-          .findIndex((item) => item.product.id === product.id);
-        if (existingItemIndex !== -1) {
-          const updatedCartItems = produce(store.cartItems(), (draft) => {
-            draft[existingItemIndex].quantity += quantity;
-          });
-          patchState(store, { cartItems: updatedCartItems });
-          toaster.success('Product added again!');
-          return;
-        }
+        loadProducts: rxMethod<void>(
+          pipe(
+            tap(() => patchState(store, { loading: true })),
+            switchMap(() => productsService.getAllProducts()),
+            tap((products) => {
+              patchState(store, {
+                products: Array.isArray(products) ? products : [products],
+              });
+            }),
+            catchError((error) => {
+              console.error('Failed to load products', error);
+              toaster.error('Failed to load products');
+              return of([]);
+            }),
+            tap(() => patchState(store, { loading: false }))
+          )
+        ),
 
-        const updatedCartItems = produce(store.cartItems(), (draft) => {
-          draft.push({ product, quantity });
-        });
+        // loadProductById: rxMethod<string>(
+        //   pipe(
+        //     tap(() => patchState(store, { loading: true })),
+        //     switchMap((id) => productsService.getProduct(id)),
+        //     tap((product) => {
+        //       patchState(store, {
+        //         selectedProductId: product.id.toString(),
+        //         selectedProduct: product,   // add this field to state if missing
+        //         loading: false,
+        //       });
+        //     })
+        //   )
+        // ),
 
-        patchState(store, { cartItems: updatedCartItems });
-        toaster.success('Product added to cart');
-      },
-      setItemQuantity(params: ItemQuantityParams): void {
-        const index = store.cartItems().findIndex((c) => c.product.id === params.productId);
-        const updated = produce(store.cartItems(), (draft) => {
-          draft[index].quantity = params.quantity;
-        });
-
-        patchState(store, { cartItems: updated });
-      },
-      removeFromCart(product: ProductModel): void {
-        patchState(store, {
-          cartItems: store.cartItems().filter((p) => p.product.id !== product.id),
-        });
-      },
-      moveToWishlist(product: ProductModel): void {
-        const updatedCartItems = store.cartItems().filter((p) => p.product.id !== product.id);
-        const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
-          if (!draft.find((p) => p.id === product.id)) {
-            draft.push(product);
-          }
-        });
-
-        patchState(store, {
-          cartItems: updatedCartItems,
-          wishlistItems: updatedWishlistItems,
-        });
-      },
-      addAllWishlistToCart(): void {
-        const updatedCartItems = produce(store.cartItems(), (draft) => {
-          store.wishlistItems().forEach((p) => {
-            if (!draft.find((c) => c.product.id === p.id)) {
-              draft.push({ product: p, quantity: 1 });
+        addToWishlist(product: ProductModel): void {
+          const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
+            if (!draft.find((p) => p.id === product.id)) {
+              draft.push(product);
             }
           });
-        });
-        patchState(store, { cartItems: updatedCartItems, wishlistItems: [] });
-      },
-      moveToCart(product: ProductModel): void {
-        const updatedWishlistItems = store.wishlistItems().filter((p) => p.id !== product.id);
-        const updatedCartItems = produce(store.cartItems(), (draft) => {
-          if (!draft.find((c) => c.product.id === product.id)) {
-            draft.push({ product, quantity: 1 });
-          }
-        });
-        patchState(store, { wishlistItems: updatedWishlistItems, cartItems: updatedCartItems });
-      },
-      clearWishlist(): void {
-        patchState(store, { wishlistItems: [] });
-      },
-      signIn({ email, password, dialogId, checkout }: SignInParams) {
-        patchState(store, {
-          user: {
-            id: '1',
-            email,
-            name: 'John Doe',
-            imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-          },
-        });
-
-        matDialog.getDialogById(dialogId)?.close();
-
-        if (checkout) {
-          router.navigate(['/checkout']);
-        }
-      },
-      signUp({ name, email, password, checkout, dialogId }: SignUpParams) {
-        patchState(store, {
-          user: {
-            id: crypto.randomUUID(),
-            email,
-            name,
-            imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-          },
-        });
-
-        matDialog.getDialogById(dialogId)?.close();
-
-        if (checkout) {
-          router.navigate(['/checkout']);
-        }
-      },
-      async placeOrder() {
-        patchState(store, { loading: true });
-
-        const user = store.user();
-        if (!user) {
-          toaster.error('Please sign in to place an order');
-          patchState(store, { loading: false });
-          return;
-        }
-
-        const order: Order = {
-          id: crypto.randomUUID(),
-          userId: user.id,
-          total: store
+          patchState(store, { wishlistItems: updatedWishlistItems });
+          toaster.success('Product added to wishlist');
+        },
+        removeFromWishlist(product: ProductModel): void {
+          patchState(store, {
+            wishlistItems: store.wishlistItems().filter((p) => p.id !== product.id),
+          });
+          toaster.success('Product removed from wishlist');
+        },
+        addToCart(product: ProductModel, quantity = 1): void {
+          const existingItemIndex = store
             .cartItems()
-            .reduce((acc, item) => acc + item.quantity * item.product.price, 0),
-          items: store.cartItems(),
-          paymentStatus: 'success',
-        };
+            .findIndex((item) => item.product.id === product.id);
+          if (existingItemIndex !== -1) {
+            const updatedCartItems = produce(store.cartItems(), (draft) => {
+              draft[existingItemIndex].quantity += quantity;
+            });
+            patchState(store, { cartItems: updatedCartItems });
+            toaster.success('Product added again!');
+            return;
+          }
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        patchState(store, { orders: [...store.orders(), order], loading: false, cartItems: [] });
-        router.navigate(['/order-success']);
-      },
-      signOut(): void {
-        patchState(store, { user: undefined });
-      },
-      setProductId: signalMethod<string>((productId) => {
-        patchState(store, { selectedProductId: productId });
-      }),
-      addReview({ title, comment, rating }: AddReviewParams): void {
-        const product = store.products().find((p) => p.id === store.selectedProductId());
-        if (!product) return;
+          const updatedCartItems = produce(store.cartItems(), (draft) => {
+            draft.push({ product, quantity });
+          });
 
-        const review: UserReviewModel = {
-          id: crypto.randomUUID(),
-          title,
-          comment,
-          rating,
-          productId: product.id,
-          userName: store.user()?.name || '',
-          userImageUrl: store.user()?.imageUrl || '',
-          reviewDate: new Date(),
-        };
+          patchState(store, { cartItems: updatedCartItems });
+          toaster.success('Product added to cart');
+        },
+        setItemQuantity(params: ItemQuantityParams): void {
+          const index = store.cartItems().findIndex((c) => c.product.id === params.productId);
+          const updated = produce(store.cartItems(), (draft) => {
+            draft[index].quantity = params.quantity;
+          });
 
-        const updatedProducts = produce(store.products(), (draft) => {
-          const index = draft.findIndex((p) => p.id === product.id);
-          draft[index].reviews.push(review);
-          draft[index].rating =
-            Math.round(
-              (draft[index].reviews.reduce((acc, r) => acc + r.rating, 0) /
-                draft[index].reviews.length) *
+          patchState(store, { cartItems: updated });
+        },
+        removeFromCart(product: ProductModel): void {
+          patchState(store, {
+            cartItems: store.cartItems().filter((p) => p.product.id !== product.id),
+          });
+        },
+        moveToWishlist(product: ProductModel): void {
+          const updatedCartItems = store.cartItems().filter((p) => p.product.id !== product.id);
+          const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
+            if (!draft.find((p) => p.id === product.id)) {
+              draft.push(product);
+            }
+          });
+
+          patchState(store, {
+            cartItems: updatedCartItems,
+            wishlistItems: updatedWishlistItems,
+          });
+        },
+        addAllWishlistToCart(): void {
+          const updatedCartItems = produce(store.cartItems(), (draft) => {
+            store.wishlistItems().forEach((p) => {
+              if (!draft.find((c) => c.product.id === p.id)) {
+                draft.push({ product: p, quantity: 1 });
+              }
+            });
+          });
+          patchState(store, { cartItems: updatedCartItems, wishlistItems: [] });
+        },
+        moveToCart(product: ProductModel): void {
+          const updatedWishlistItems = store.wishlistItems().filter((p) => p.id !== product.id);
+          const updatedCartItems = produce(store.cartItems(), (draft) => {
+            if (!draft.find((c) => c.product.id === product.id)) {
+              draft.push({ product, quantity: 1 });
+            }
+          });
+          patchState(store, { wishlistItems: updatedWishlistItems, cartItems: updatedCartItems });
+        },
+        clearWishlist(): void {
+          patchState(store, { wishlistItems: [] });
+        },
+        signIn({ email, password, dialogId, checkout }: SignInParams) {
+          patchState(store, {
+            user: {
+              id: '1',
+              email,
+              name: 'John Doe',
+              imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+            },
+          });
+
+          matDialog.getDialogById(dialogId)?.close();
+
+          if (checkout) {
+            router.navigate(['/checkout']);
+          }
+        },
+        signUp({ name, email, password, checkout, dialogId }: SignUpParams) {
+          patchState(store, {
+            user: {
+              id: crypto.randomUUID(),
+              email,
+              name,
+              imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+            },
+          });
+
+          matDialog.getDialogById(dialogId)?.close();
+
+          if (checkout) {
+            router.navigate(['/checkout']);
+          }
+        },
+        async placeOrder() {
+          patchState(store, { loading: true });
+
+          const user = store.user();
+          if (!user) {
+            toaster.error('Please sign in to place an order');
+            patchState(store, { loading: false });
+            return;
+          }
+
+          const order: Order = {
+            id: crypto.randomUUID(),
+            userId: user.id,
+            total: store
+              .cartItems()
+              .reduce((acc, item) => acc + item.quantity * item.product.price, 0),
+            items: store.cartItems(),
+            paymentStatus: 'success',
+          };
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          patchState(store, { orders: [...store.orders(), order], loading: false, cartItems: [] });
+          router.navigate(['/order-success']);
+        },
+        signOut(): void {
+          patchState(store, { user: undefined });
+        },
+        setProductId: signalMethod<string>((productId) => {
+          patchState(store, { selectedProductId: productId });
+        }),
+        addReview({ title, comment, rating }: AddReviewParams): void {
+          const product = store.products().find((p) => p.id === store.selectedProductId());
+          if (!product) return;
+
+          const review: UserReviewModel = {
+            id: crypto.randomUUID(),
+            title,
+            comment,
+            rating,
+            productId: product.id,
+            userName: store.user()?.name || '',
+            userImageUrl: store.user()?.imageUrl || '',
+            reviewDate: new Date(),
+          };
+
+          const updatedProducts = produce(store.products(), (draft) => {
+            const index = draft.findIndex((p) => p.id === product.id);
+            draft[index].reviews.push(review);
+            draft[index].rating =
+              Math.round(
+                (draft[index].reviews.reduce((acc, r) => acc + r.rating, 0) /
+                  draft[index].reviews.length) *
                 10,
-            ) / 10;
-          draft[index].reviewCount = draft[index].reviews.length;
-        });
-        patchState(store, { products: updatedProducts });
-      },
-    }),
+              ) / 10;
+            draft[index].reviewCount = draft[index].reviews.length;
+          });
+          patchState(store, { products: updatedProducts });
+        },
+      }
+    },
   ),
   withComputed((store, responsiveManager = inject(ResponsiveManagerService)) => ({
     filteredProducts: computed(() => {
@@ -244,5 +289,6 @@ export const EcommerceStore = signalStore(
     selectedProduct: computed(() => {
       return store.products().find((p) => p.id === store.selectedProductId());
     }),
+    loading: computed(() => store.loading()),
   })),
 );

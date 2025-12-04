@@ -179,8 +179,27 @@ mat-sidenav {
 //Responsive grid
 .responsive-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
+}
+
+// spinner
+.progressive-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.progressive-details-spinner {
+  margin-top: 300px;
+}
+
+.empty-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 300px;
 }
 
 // Toast

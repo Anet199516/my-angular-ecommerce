@@ -989,8 +989,20 @@ export const INITIAL_STATE: EcommerceState = {
   ],
   cartItems: [],
   wishlistItems: [],
+  loading: true,
+  category: 'all',
+  searchTerm: '',
+  user: undefined,
 
-  loading: false,
+  orders: [],
+
+  selectedProductId: undefined,
+};
+export const INITIAL_STATE_FOR_MOCK: EcommerceState = {
+  products: [...INITIAL_STATE.products],
+  cartItems: [],
+  wishlistItems: [],
+  loading: true,
   category: 'all',
   searchTerm: '',
   user: undefined,

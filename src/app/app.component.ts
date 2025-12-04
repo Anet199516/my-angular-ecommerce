@@ -9,4 +9,10 @@ import { HeaderComponent } from './layout/header/header.component';
   standalone: true,
   providers: [],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  protected store = inject(EcommerceStore);
+
+  ngOnInit() {
+    this.store.loadProducts();
+  }
+}

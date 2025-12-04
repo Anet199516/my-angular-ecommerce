@@ -1,18 +1,22 @@
 <div class="mx-auto max-w-[1200px] py-6">
   <app-back-button class="mb-6" (backClicked)="goBack()">Back to Products</app-back-button>
 
-  @if (store.selectedProduct(); as product) {
+  @if (loading()) {
+    <div class="progressive-spinner progressive-details-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (product()) {
     <div class="flex gap-8 mb-8">
       <img
-        [src]="product.imageUrl"
-        [alt]="product.name"
+        [src]="product()?.imageUrl"
+        [alt]="product()?.name"
         class="w-[500px] h-[550px] object-cover rounded-lg"
-        [style.view-transition-name]="'product-image-' + product.id"
+        [style.view-transition-name]="'product-image-' + product()?.id"
       />
       <div class="flex-1">
-        <app-product-info [product]="product" />
+        <app-product-info [product]="product()" />
       </div>
     </div>
-    <app-view-reviews [product]="product" />
+    <app-view-reviews [product]="product()" />
   }
 </div>
