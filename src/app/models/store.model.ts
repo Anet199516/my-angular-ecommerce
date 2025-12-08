@@ -30,7 +30,7 @@ export const INITIAL_STATE: EcommerceState = {
       imageUrl:
         'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&w=400&q=80',
       isFavorite: false,
-      rating: 4.8,
+      rating: 2,
       reviewCount: 6,
       inStock: true,
       category: 'electronics',
@@ -40,7 +40,7 @@ export const INITIAL_STATE: EcommerceState = {
           productId: '1',
           userName: 'Sarah Johnson',
           userImageUrl: 'https://randomuser.me/api/portraits/women/1.jpg',
-          rating: 5,
+          rating: 2,
           title: 'Amazing noise cancellation!',
           comment:
             'These headphones are incredible. The noise cancellation works perfectly on flights and the battery lasts all day.',
@@ -111,7 +111,7 @@ export const INITIAL_STATE: EcommerceState = {
       imageUrl:
         'https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&w=400&q=80',
       isFavorite: false,
-      rating: 4.6,
+      rating: 1,
       reviewCount: 6,
       inStock: true,
       category: 'electronics',
@@ -132,7 +132,7 @@ export const INITIAL_STATE: EcommerceState = {
           productId: '2',
           userName: 'Jennifer Lee',
           userImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg',
-          rating: 4,
+          rating: 2,
           title: 'Great TV, minor issues',
           comment:
             'Picture is fantastic but the remote could be better. Overall very happy with the purchase.',
